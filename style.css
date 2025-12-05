@@ -1,0 +1,10 @@
+body { font-family: Arial, sans-serif; max-width: 900px; margin: 24px auto; padding: 0 16px; }
+nav a { margin-right: 12px; }
+.who { margin-left: 8px; color: #555; }
+form { display: grid; gap: 10px; max-width: 700px; }
+input[type=text], input[type=password], textarea { width: 100%; padding: 8px; }
+button { padding: 8px 12px; cursor: pointer; }
+.post { border: 1px solid #ddd; padding: 12px; margin-bottom: 12px; border-radius: 6px; }
+.actions a { margin-right: 8px; }
+.error { color: #c00; }
+.success { color: #080; }
