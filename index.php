@@ -61,25 +61,26 @@ $posts = $listStmt->fetchAll();
   <?php endif; ?>
 
   <?php foreach ($posts as $p): ?>
-    <div class="card mb-3 shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title"><?php echo htmlspecialchars($p['title']); ?></h5>
-        <p class="card-text"><?php echo nl2br(htmlspecialchars($p['content'])); ?></p>
-        <small class="text-muted">Created at: <?php echo htmlspecialchars($p['created_at']); ?></small>
-        <div class="mt-2 d-flex gap-2">
-          <!-- Always visible -->
-          <a href="view.php?id=<?php echo (int)$p['id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
+  <div class="card mb-3 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title"><?php echo htmlspecialchars($p['title']); ?></h5>
+      <p class="card-text"><?php echo nl2br(htmlspecialchars($p['content'])); ?></p>
+      <small class="text-muted">Created at: <?php echo htmlspecialchars($p['created_at']); ?></small><br>
+      <small class="text-muted">Posted by: <?php echo htmlspecialchars($p['created_by'] ?? 'Unknown'); ?></small>
+      <div class="mt-2 d-flex gap-2">
+        <!-- Always visible -->
+        <a href="view.php?id=<?php echo (int)$p['id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
 
-          <!-- Only for admins -->
-          <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
-            <a href="edit.php?id=<?php echo (int)$p['id']; ?>" class="btn btn-sm btn-outline-warning">Edit</a>
-            <a href="delete.php?id=<?php echo (int)$p['id']; ?>" class="btn btn-sm btn-outline-danger"
-               onclick="return confirm('Delete this post?');">Delete</a>
-          <?php endif; ?>
-        </div>
+        <!-- Only for admins -->
+        <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
+          <a href="edit.php?id=<?php echo (int)$p['id']; ?>" class="btn btn-sm btn-outline-warning">Edit</a>
+          <a href="delete.php?id=<?php echo (int)$p['id']; ?>" class="btn btn-sm btn-outline-danger"
+             onclick="return confirm('Delete this post?');">Delete</a>
+        <?php endif; ?>
       </div>
     </div>
-  <?php endforeach; ?>
+  </div>
+<?php endforeach; ?>
 
   <!-- Pagination -->
   <?php if ($totalPages > 1): ?>
