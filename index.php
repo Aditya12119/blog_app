@@ -41,62 +41,72 @@ $listStmt->execute();
 $posts = $listStmt->fetchAll();
 ?>
 
-<h2>All Posts</h2>
+<div class="container py-4">
+  <h2 class="mb-4">All Posts</h2>
 
-<!-- Search bar -->
-<form method="get" action="index.php">
-  <input type="text" name="q" placeholder="Search posts..." 
-         value="<?php echo htmlspecialchars($search); ?>">
-  <button type="submit">Search</button>
-  <?php if ($search !== ''): ?>
-    <a href="index.php">Clear</a>
-  <?php endif; ?>
-</form>
-
-<?php if (empty($posts)): ?>
-  <p>No posts<?php echo $search ? ' found for “' . htmlspecialchars($search) . '”' : ''; ?>.</p>
-<?php endif; ?>
-
-<?php foreach ($posts as $p): ?>
-  <div class="post">
-    <h3><?php echo htmlspecialchars($p['title']); ?></h3>
-    <p><?php echo nl2br(htmlspecialchars($p['content'])); ?></p>
-    <small>Created at: <?php echo htmlspecialchars($p['created_at']); ?></small>
-    <?php if (isset($_SESSION['user'])): ?>
-      <div class="actions">
-        <a href="edit.php?id=<?php echo (int)$p['id']; ?>">Edit</a>
-        <a href="delete.php?id=<?php echo (int)$p['id']; ?>" onclick="return confirm('Delete this post?');">Delete</a>
-      </div>
+  <!-- Search bar -->
+  <form method="get" action="index.php" class="mb-3 d-flex gap-2">
+    <input type="text" name="q" class="form-control" placeholder="Search posts..."
+           value="<?php echo htmlspecialchars($search); ?>">
+    <button type="submit" class="btn btn-primary">Search</button>
+    <?php if ($search !== ''): ?>
+      <a href="index.php" class="btn btn-secondary">Clear</a>
     <?php endif; ?>
-  </div>
-<?php endforeach; ?>
+  </form>
 
-<!-- Pagination -->
-<?php if ($totalPages > 1): ?>
-  <div class="pagination">
-    <?php
-      $qParam = $search !== '' ? '&q=' . urlencode($search) : '';
+  <?php if (empty($posts)): ?>
+    <div class="alert alert-info">
+      No posts<?php echo $search ? ' found for “' . htmlspecialchars($search) . '”' : ''; ?>.
+    </div>
+  <?php endif; ?>
 
-      // Previous link
-      if ($page > 1) {
-        echo "<a href='index.php?page=" . ($page-1) . "$qParam'>&laquo; Prev</a> ";
-      }
+  <?php foreach ($posts as $p): ?>
+    <div class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title"><?php echo htmlspecialchars($p['title']); ?></h5>
+        <p class="card-text"><?php echo nl2br(htmlspecialchars($p['content'])); ?></p>
+        <small class="text-muted">Created at: <?php echo htmlspecialchars($p['created_at']); ?></small>
+        <div class="mt-2 d-flex gap-2">
+          <!-- Always visible -->
+          <a href="view.php?id=<?php echo (int)$p['id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
 
-      // Page numbers
-      for ($i = 1; $i <= $totalPages; $i++) {
-        if ($i == $page) {
-          echo "<strong>$i</strong> ";
-        } else {
-          echo "<a href='index.php?page=$i$qParam'>$i</a> ";
-        }
-      }
+          <!-- Only for admins -->
+          <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
+            <a href="edit.php?id=<?php echo (int)$p['id']; ?>" class="btn btn-sm btn-outline-warning">Edit</a>
+            <a href="delete.php?id=<?php echo (int)$p['id']; ?>" class="btn btn-sm btn-outline-danger"
+               onclick="return confirm('Delete this post?');">Delete</a>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+  <?php endforeach; ?>
 
-      // Next link
-      if ($page < $totalPages) {
-        echo "<a href='index.php?page=" . ($page+1) . "$qParam'>Next &raquo;</a>";
-      }
-    ?>
-  </div>
-<?php endif; ?>
+  <!-- Pagination -->
+  <?php if ($totalPages > 1): ?>
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        <?php
+          $qParam = $search !== '' ? '&q=' . urlencode($search) : '';
+
+          // Previous link
+          if ($page > 1) {
+            echo "<li class='page-item'><a class='page-link' href='index.php?page=" . ($page-1) . "$qParam'>&laquo; Prev</a></li>";
+          }
+
+          // Page numbers
+          for ($i = 1; $i <= $totalPages; $i++) {
+            $active = $i == $page ? "active" : "";
+            echo "<li class='page-item $active'><a class='page-link' href='index.php?page=$i$qParam'>$i</a></li>";
+          }
+
+          // Next link
+          if ($page < $totalPages) {
+            echo "<li class='page-item'><a class='page-link' href='index.php?page=" . ($page+1) . "$qParam'>Next &raquo;</a></li>";
+          }
+        ?>
+      </ul>
+    </nav>
+  <?php endif; ?>
+</div>
 
 <?php include 'footer.php'; ?>
